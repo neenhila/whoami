@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Writing Animation</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div id="text-container">
+        <div id="text">Hello world!</div>
+      </div>
+      <input type="range" name="speed" id="speed" min="0" max="100" />
+      <div class="range-now">Speed: <span class="range-now"></span></div>
+    </div>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+      }
+
+      body {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+      }
+
+      .container {
+        width: min(100vh - 15px, 850px);
+        aspect-ratio: 2/1;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 25px;
+      }
+
+      #text-container {
+        font-size: 7vmin;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+        overflow: visible;
+      }
+
+      #text {
+        width: 0%;
+        overflow: hidden;
+        white-space: nowrap;
+        animation: writingMode infinite, blink infinite;
+        animation-duration: 1s, 1s;
+        animation-timing-function: steps(15);
+        background: linear-gradient(to right, black, black);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      #speed {
+        width: 60%;
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+        direction: rtl;
+      }
+
+      #speed::-webkit-slider-runnable-track {
+        background: gray;
+        border-radius: 15px;
+      }
+
+      #speed::-moz-range-track {
+        background: gray;
+        border-radius: 15px;
+      }
+
+      #speed::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: lightseagreen;
+      }
+
+      .range-now span {
+        font-weight: bold;
+      }
+
+      @keyframes blink {
+        100% {
+          border-right: 1px solid black;
+        }
+      }
+
+      @keyframes writingMode {
+        50% {
+          width: 100%;
+        }
+        100% {
+          width: 0%;
+        }
+      }
+    </style>
+  </body>
+  <script type="text/javascript">
+    let text = document.getElementById("text");
+    let range = document.getElementById("speed");
+    let progress = document.getElementsByClassName("range-now")[1];
+    let texts = [
+      "I'm Learner",
+      "I searched Front-end...",
+      "I tried Back-end...",
+      "I needed Data...",
+      "I learned Algorithm...",
+      "I copied Designs...",
+      "Now I'm, Full-stack Developer!",
+    ];
+    let index = 0;
+    function getRandomHex() {
+      /**
+       * @returns {String} Returns you a hex code as string value (it starts with # automatically e.g #5f351a).
+       */
+      return "#" + ((Math.random() * 0xffffff) << 0).toString(16).padStart(6, "0");
+    }
+    text.addEventListener("animationiteration", function (e) {
+      if (e.animationName !== "writingMode") return;
+
+      text.innerText = texts[index];
+      text.style.background = `linear-gradient(to right, ${getRandomHex()}, ${getRandomHex()})`;
+      text.style.backgroundClip = "text";
+      text.style.webkitBackgroundClip = "text";
+      text.style.color = "transparent";
+      index == texts.length - 1 ? (index = 0) : (index += 1);
+    });
+    setInterval(function () {
+      let speed = Math.floor(range.value).toFixed(2) * 0.05;
+      progress.innerText = speed.toFixed(2);
+      text.style.animationDuration = `${speed}s, 1s`;
+      text.style.animationTimingFunction = `steps(${text.innerText.length})`;
+      console.log(text.style.animationTimingFunction);
+    }, 50);
+
+    window.addEventListener("wheel", function (e) {
+      if (e.deltaY < 0) {
+        if (range.value > 1) range.value = Math.floor(range.value) - 1;
+      } else if (e.deltaY > 0) {
+        if (range.value < 100) range.value = Math.floor(range.value) + 1;
+      }
+    });
+  </script>
+</html>
